@@ -1,0 +1,133 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Water Reminder",
+        "data": {
+          "notify_services": "Notify targets",
+          "alarm_entity": "Alarm panel",
+          "quiet_alarm_states": "Quiet at alarm state",
+          "clear_after": "Remove notification after",
+          "title": "Title",
+          "message": "Message"
+        },
+        "data_description": {
+          "notify_services": "One or more devices with the Home Assistant Companion app.",
+          "alarm_entity": "Optional. No reminder in the states selected below.",
+          "clear_after": "0 = keep the notification.",
+          "title": "Empty = default: {default_title}",
+          "message": "Empty = default: {default_message}"
+        }
+      }
+    },
+    "error": {
+      "unknown_service": "Service not found.",
+      "not_mobile_app": "Only notify.mobile_app_* services (Home Assistant Companion app) are supported.",
+      "no_service": "Choose at least one notify target."
+    },
+    "abort": {
+      "already_configured": "A reminder for these targets already exists."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "notify_services": "Notify targets",
+          "alarm_entity": "Alarm panel",
+          "quiet_alarm_states": "Quiet at alarm state",
+          "clear_after": "Remove notification after",
+          "title": "Title",
+          "message": "Message"
+        },
+        "data_description": {
+          "notify_services": "One or more devices with the Home Assistant Companion app.",
+          "alarm_entity": "Optional. No reminder in the states selected below.",
+          "clear_after": "0 = keep the notification.",
+          "title": "Empty = default: {default_title}",
+          "message": "Empty = default: {default_message}"
+        }
+      }
+    },
+    "error": {
+      "unknown_service": "Service not found.",
+      "not_mobile_app": "Only notify.mobile_app_* services (Home Assistant Companion app) are supported.",
+      "no_service": "Choose at least one notify target."
+    }
+  },
+  "selector": {
+    "quiet_alarm_states": {
+      "options": {
+        "armed_home": "Armed home",
+        "armed_away": "Armed away",
+        "armed_night": "Armed night",
+        "armed_vacation": "Armed vacation",
+        "armed_custom_bypass": "Armed custom bypass"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "focus_quiet": {
+        "name": "Quiet (Focus)"
+      },
+      "enabled": {
+        "name": "Water Reminder"
+      }
+    },
+    "number": {
+      "interval": {
+        "name": "Interval"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "off": "Off",
+          "active": "Active",
+          "paused": "Paused",
+          "quiet_alarm": "Quiet (alarm)",
+          "quiet_focus": "Quiet (focus)"
+        }
+      },
+      "next_push": {
+        "name": "Next reminder"
+      },
+      "paused_until": {
+        "name": "Paused until"
+      }
+    },
+    "button": {
+      "test": {
+        "name": "Send test"
+      },
+      "pause_1h": {
+        "name": "Pause 1 h"
+      },
+      "pause_3h": {
+        "name": "Pause 3 h"
+      },
+      "pause_today": {
+        "name": "Pause today"
+      },
+      "resume": {
+        "name": "Resume"
+      }
+    }
+  },
+  "exceptions": {
+    "test_off": {
+      "message": "Not sent: the reminder is switched off."
+    },
+    "test_paused": {
+      "message": "Not sent: the reminder is paused."
+    },
+    "test_quiet_alarm": {
+      "message": "Not sent: quiet because of the alarm state."
+    },
+    "test_quiet_focus": {
+      "message": "Not sent: quiet because of Focus."
+    }
+  }
+}

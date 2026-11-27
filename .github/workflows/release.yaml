@@ -1,0 +1,117 @@
+name: Release
+
+# One click: bump the manifest version on main, tag it and create a draft release.
+# Only the release maintainer named in the job's `if:` can run it (also re-runs);
+# the environment `release` holds the token and needs the maintainer's approval.
+# The draft is published by hand.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (empty = next <year>.<month>.<increment>; b<n> suffix = pre-release)"
+        required: false
+        default: ""
+      notes:
+        description: "Text placed above the generated release notes (optional)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  MANIFEST: custom_components/water_reminder/manifest.json
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.triggering_actor == 'TheBigNeo' && github.ref == 'refs/heads/main'
+    environment: release
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Pushes to the protected main branch need a token with bypass rights.
+          token: ${{ secrets.RELEASE_TOKEN }}
+          fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import datetime, json, os, re, sys
+
+          pattern = re.compile(r"^(\d{4})\.([1-9]\d?)\.([1-9]\d*)(b[1-9]\d*)?$")
+          current = json.load(open(os.environ["MANIFEST"]))["version"]
+          wanted = os.environ["INPUT_VERSION"].strip()
+
+          if wanted:
+              if not pattern.match(wanted):
+                  sys.exit(f"Invalid version {wanted!r}, expected e.g. 2026.11.2 or 2026.11.2b1")
+              version = wanted
+          else:
+              today = datetime.datetime.now(datetime.timezone.utc)
+              match = pattern.match(current)
+              if match and (int(match[1]), int(match[2])) == (today.year, today.month):
+                  # A pre-release on main (2026.11.2b1) becomes its final version (2026.11.2).
+                  increment = int(match[3]) if match[4] else int(match[3]) + 1
+              else:
+                  increment = 1
+              version = f"{today.year}.{today.month}.{increment}"
+
+          if version == current:
+              sys.exit(f"Version {version} is already in the manifest")
+          print(f"version={version}")
+          print(f"prerelease={'true' if 'b' in version else 'false'}")
+          EOF
+
+      - name: Check that the tag is new
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null; then
+            echo "Tag $VERSION already exists"
+            exit 1
+          fi
+
+      - name: Bump manifest, commit, tag and push
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, re
+
+          # Replace only the version value so the rest of the file keeps its formatting.
+          path = os.environ["MANIFEST"]
+          text = open(path).read()
+          text, count = re.subn(r'("version"\s*:\s*)"[^"]*"', rf'\g<1>"{os.environ["VERSION"]}"', text)
+          if count != 1:
+              raise SystemExit(f"Expected one version field in {path}, found {count}")
+          assert json.loads(text)["version"] == os.environ["VERSION"]
+          open(path, "w").write(text)
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Release $VERSION"
+          git tag -a "$VERSION" -m "Release $VERSION"
+          git push --atomic origin HEAD:main "refs/tags/$VERSION"
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+          NOTES: ${{ inputs.notes }}
+        run: |
+          args=(--draft --verify-tag --title "$VERSION" --generate-notes)
+          # With --notes, gh puts the generated notes below this text.
+          [ -n "$NOTES" ] && args+=(--notes "$NOTES")
+          [ "$PRERELEASE" = "true" ] && args+=(--prerelease)
+          url=$(gh release create "$VERSION" "${args[@]}")
+          echo "Draft release **$VERSION** created: $url" >> "$GITHUB_STEP_SUMMARY"
+          echo "Review and publish it; the Marketplace only sees published releases." >> "$GITHUB_STEP_SUMMARY"

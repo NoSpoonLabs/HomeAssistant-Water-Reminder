@@ -1,0 +1,14 @@
+{
+  "domain": "water_reminder",
+  "name": "Water Reminder",
+  "categories": ["health_wellbeing"],
+  "codeowners": ["@TheBigNeo"],
+  "config_flow": true,
+  "dependencies": ["http"],
+  "documentation": "https://github.com/NoSpoonLabs/HomeAssistant-Water-Reminder",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/NoSpoonLabs/HomeAssistant-Water-Reminder/issues",
+  "requirements": [],
+  "version": "2026.11.2"
+}

@@ -1,0 +1,133 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Water Reminder",
+        "data": {
+          "notify_services": "Benachrichtigungsziele",
+          "alarm_entity": "Alarmanlage",
+          "quiet_alarm_states": "Still bei Alarmzustand",
+          "clear_after": "Meldung entfernen nach",
+          "title": "Titel",
+          "message": "Nachricht"
+        },
+        "data_description": {
+          "notify_services": "Ein oder mehrere Geräte mit der Home Assistant Companion App.",
+          "alarm_entity": "Optional. Keine Erinnerung in den unten gewählten Zuständen.",
+          "clear_after": "0 = Meldung bleibt stehen.",
+          "title": "Leer = Standard: {default_title}",
+          "message": "Leer = Standard: {default_message}"
+        }
+      }
+    },
+    "error": {
+      "unknown_service": "Dienst nicht gefunden.",
+      "not_mobile_app": "Nur notify.mobile_app_*-Dienste (Home Assistant Companion App) werden unterstützt.",
+      "no_service": "Mindestens ein Benachrichtigungsziel wählen."
+    },
+    "abort": {
+      "already_configured": "Für diese Ziele gibt es bereits eine Erinnerung."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "notify_services": "Benachrichtigungsziele",
+          "alarm_entity": "Alarmanlage",
+          "quiet_alarm_states": "Still bei Alarmzustand",
+          "clear_after": "Meldung entfernen nach",
+          "title": "Titel",
+          "message": "Nachricht"
+        },
+        "data_description": {
+          "notify_services": "Ein oder mehrere Geräte mit der Home Assistant Companion App.",
+          "alarm_entity": "Optional. Keine Erinnerung in den unten gewählten Zuständen.",
+          "clear_after": "0 = Meldung bleibt stehen.",
+          "title": "Leer = Standard: {default_title}",
+          "message": "Leer = Standard: {default_message}"
+        }
+      }
+    },
+    "error": {
+      "unknown_service": "Dienst nicht gefunden.",
+      "not_mobile_app": "Nur notify.mobile_app_*-Dienste (Home Assistant Companion App) werden unterstützt.",
+      "no_service": "Mindestens ein Benachrichtigungsziel wählen."
+    }
+  },
+  "selector": {
+    "quiet_alarm_states": {
+      "options": {
+        "armed_home": "Scharf (Zuhause)",
+        "armed_away": "Scharf (Abwesend)",
+        "armed_night": "Scharf (Nacht)",
+        "armed_vacation": "Scharf (Urlaub)",
+        "armed_custom_bypass": "Scharf (Benutzerdefiniert)"
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "focus_quiet": {
+        "name": "Still (Fokus)"
+      },
+      "enabled": {
+        "name": "Water Reminder"
+      }
+    },
+    "number": {
+      "interval": {
+        "name": "Intervall"
+      }
+    },
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "off": "Aus",
+          "active": "Aktiv",
+          "paused": "Pausiert",
+          "quiet_alarm": "Still (Alarm)",
+          "quiet_focus": "Still (Fokus)"
+        }
+      },
+      "next_push": {
+        "name": "Nächste Erinnerung"
+      },
+      "paused_until": {
+        "name": "Pausiert bis"
+      }
+    },
+    "button": {
+      "test": {
+        "name": "Test senden"
+      },
+      "pause_1h": {
+        "name": "1 h pausieren"
+      },
+      "pause_3h": {
+        "name": "3 h pausieren"
+      },
+      "pause_today": {
+        "name": "Heute pausieren"
+      },
+      "resume": {
+        "name": "Fortsetzen"
+      }
+    }
+  },
+  "exceptions": {
+    "test_off": {
+      "message": "Nicht gesendet: Die Erinnerung ist ausgeschaltet."
+    },
+    "test_paused": {
+      "message": "Nicht gesendet: Die Erinnerung ist pausiert."
+    },
+    "test_quiet_alarm": {
+      "message": "Nicht gesendet: Ruhe wegen Alarmzustand."
+    },
+    "test_quiet_focus": {
+      "message": "Nicht gesendet: Ruhe wegen Fokus."
+    }
+  }
+}
